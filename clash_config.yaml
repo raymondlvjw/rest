@@ -1,0 +1,19 @@
+proxies:
+  - name: "VPN US"
+    type: wireguard
+    server: 207.230.125.177
+    port: 51820
+    peer-public-key: 1g84fGxVJokKXdMYEJKjN6/opyYN/YSHmrMyw0v6VnM=
+    allowed-ips:
+      - 0.0.0.0/0
+    private-key: uE8LS5IM1Voiup89Lwi+QYldG8MCxtrY+SUcaNNgpG4=
+    dns:
+      - 208.67.222.222
+      - 208.67.220.220
+    local-address: 10.14.0.2  # 设置本地地址（匹配你的 WireGuard 地址）
+    mtu: 1420
+    udp-relay: false
+
+rules:
+  - GEOIP,CN,DIRECT  # 国内流量直连
+  - MATCH,US-VPN  # 其他流量走美国 VPN
