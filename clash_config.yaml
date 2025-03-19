@@ -17,5 +17,6 @@ proxy-groups:
       - "WireGuard节点"
 
 rules:
-  - GEOIP,CN,DIRECT  # 国内流量直连
-  - MATCH,US-VPN  # 其他流量走美国 VPN
+  - DOMAIN-SUFFIX,google.com,PROXY
+  - GEOIP,CN,DIRECT
+  - MATCH,PROXY
