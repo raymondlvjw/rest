@@ -9,7 +9,8 @@ proxies:
       - 208.67.222.222
       - 208.67.220.220
     peer-public-key: "1g84fGxVJokKXdMYEJKjN6/opyYN/YSHmrMyw0v6VnM="
-    allowed-ips: "0.0.0.0/0"
+    allowed-ips: 
+      - 0.0.0.0/0
 
 rules:
   - GEOIP,CN,DIRECT  # 国内流量直连
