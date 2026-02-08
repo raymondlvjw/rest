@@ -1,0 +1,2 @@
+sku,category,sell_price,length_cm,width_cm,height_cm,weight_kg,product_cost,inbound_cost,ppc_pct,return_pct,tax_rate_pct
+A001,home,29.99,22,15,8,0.62,6.5,0.9,8,2,0
