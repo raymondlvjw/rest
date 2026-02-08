@@ -1,91 +1,60 @@
-# US FBA 成本自动计算器（中文表头 + 可视化）
+# US FBA 成本工具（可视化实时计算 + CSV编辑）
 
-这个工具现在支持：
-- ✅ 中文输入表头（也兼容英文表头）
-- ✅ 中文输出表头（默认）
-- ✅ 单个产品命令行计算
-- ✅ 批量 CSV 计算
-- ✅ 可视化窗口实时计算（GUI）
+## 你这次要求的能力（已支持）
+- 直接打开可视化窗口输入产品信息，实时计算费用。
+- 在窗口里选择**当前文件夹下**的 CSV 文件并查看内容。
+- 可以新增数据行、更新已有行。
+- 可以“覆盖保存”回原 CSV（同步更新）。
+- 也支持“导出为新CSV”。
 
 ---
 
-## 1）关于你问的“佣金/FBA数据来自哪里？”
+## 1) 数据来源说明（你问的佣金/FBA来源）
+当前脚本中的佣金和 FBA 是 **MVP 简化估算规则**：
+- 佣金：类目比例（如 home 15%、electronics 8%）+ 最低佣金保护
+- FBA：按尺寸段 + 重量段的简化分段
 
-当前版本使用的是 **MVP 简化费率**，依据 Amazon US 常见费率结构做了估算模型：
-- 佣金：按类目比例（如 home 15%、electronics 8%）+ 最低佣金保护
-- FBA 尾程费：按简化的尺寸段 + 重量分段
-
-> 这不是官方实时接口数据。正式上线前请用 Amazon Seller Central 最新费率公告更新 `REFERRAL_RATE` 与 `fulfillment_fee_usd()`。
-
-核心费率位置：
+不是 Amazon 官方实时 API 数据；正式上线前请按 Seller Central 最新费率更新脚本里的：
 - `REFERRAL_RATE` / `MIN_REFERRAL_FEE`
 - `fulfillment_fee_usd()`
 
 ---
 
-## 2）批量 CSV（中文表头）
+## 2) 可视化窗口使用（推荐）
+### 方式A：双击启动（Windows）
+直接双击：`launch_gui.bat`
 
-### 输入模板
-文件：`us_fba_template.csv`
-
-表头：
-`SKU,类目,售价,长cm,宽cm,高cm,重量kg,采购成本,头程成本,广告占比,退货占比,税率`
-
-### 执行命令
-Windows 推荐：
-```bash
-python us_fba_calculator.py --input us_fba_template.csv --output us_fba_result.csv
-```
-
-输出默认使用中文字段（例如：`大小件类型`、`FBA尾程费USD`、`利润USD`）。
-
-如果你想输出英文字段：
-```bash
-python us_fba_calculator.py --input us_fba_template.csv --output us_fba_result.csv --output-lang en
-```
-
----
-
-## 3）单个产品命令行计算
-
-```bash
-python us_fba_calculator.py \
-  --sku A100 \
-  --category home \
-  --sell-price 39.99 \
-  --length-cm 30 --width-cm 20 --height-cm 10 \
-  --weight-kg 0.8 \
-  --product-cost 8.5 --inbound-cost 1.2 \
-  --ppc-pct 10 --return-pct 2 --tax-rate-pct 0
-```
-
----
-
-## 4）可视化窗口（你要的“直接窗口输入实时计算”）
-
-启动方式：
+### 方式B：命令启动
 ```bash
 python us_fba_calculator.py --gui
 ```
 
-功能：
-- 左侧输入 SKU、类目、尺寸、重量、成本、税率
-- 实时显示计算结果
-- 点击“批量CSV转换”可选择输入文件并导出结果
-
-> 如果运行报错提示缺少 tkinter：说明你的 Python 安装未包含 GUI 组件。
+### 窗口内操作流程
+1. 点击 **刷新当前目录CSV**（扫描当前目录所有 `.csv`）。
+2. 下拉选择目标文件，点击 **打开选中文件**。
+3. 点击某一行后，下方编辑区会载入该行内容。修改后点 **新增/更新当前行**。
+4. 若要新增，点 **新增空白行**，填写后点 **新增/更新当前行**。
+5. 点 **覆盖保存到当前CSV**，会直接覆盖原文件。
+6. 点 **导出为新CSV** 可另存一份。
 
 ---
 
-## 5）本地仓库/分支提醒
+## 3) CSV表头（中文）
+输入与输出都使用中文字段：
+- 核心输入：`SKU,类目,售价,长cm,宽cm,高cm,重量kg,采购成本,头程成本,广告占比,退货占比,税率`
+- 计算输出：`大小件类型,FBA尾程费USD,佣金USD,税费USD,总成本USD,利润USD,利润率%,保本售价USD`
 
-如果 GitHub 网页看不到文件，通常是：
-1. 改动在 `work` 分支，不在 `main`
-2. 本地还没 `git push` 到远程
+模板文件：`us_fba_template.csv`
 
-可先执行：
+---
+
+## 4) 命令行批量（仍可用）
 ```bash
-git branch -vv
-git remote -v
-git push -u origin work
+python us_fba_calculator.py --input us_fba_template.csv --output us_fba_result.csv
 ```
+
+---
+
+## 5) 常见问题
+- `--gui` 报错 no display：表示当前环境无桌面（如服务器容器），在本机 Windows 运行即可。
+- 打开后没看到新文件：先确认你保存覆盖的是当前窗口顶部状态里显示的那个 CSV。
