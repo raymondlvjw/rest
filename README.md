@@ -1,111 +1,91 @@
-# US FBA 成本自动计算器（更好上手版）
+# US FBA 成本自动计算器（中文表头 + 可视化）
 
-这个工具用于美国站（US）快速估算：
-- 大小件类型（`size_tier`）
-- FBA 尾程费（`fba_fee_usd`）
-- 销售佣金（`referral_fee_usd`）
-- 税费（`tax_amount_usd`）
-- 总成本、利润、利润率、保本售价
-
-> 说明：当前费率是 MVP 简化规则，用于快速测算；正式使用前请按 Amazon US 官方最新费率更新。
+这个工具现在支持：
+- ✅ 中文输入表头（也兼容英文表头）
+- ✅ 中文输出表头（默认）
+- ✅ 单个产品命令行计算
+- ✅ 批量 CSV 计算
+- ✅ 可视化窗口实时计算（GUI）
 
 ---
 
-## 1. “本地仓库”是什么？在哪里？
+## 1）关于你问的“佣金/FBA数据来自哪里？”
 
-你现在看到的这套文件在**本地 git 仓库**里（也就是你当前代码工作目录）。
-当前路径是：
-- `/workspace/rest`
+当前版本使用的是 **MVP 简化费率**，依据 Amazon US 常见费率结构做了估算模型：
+- 佣金：按类目比例（如 home 15%、electronics 8%）+ 最低佣金保护
+- FBA 尾程费：按简化的尺寸段 + 重量分段
 
-在终端里运行：
-```bash
-pwd
-git status -sb
-git branch -vv
-```
-可以看到你正在哪个分支（例如 `work`），文件是否已提交。
+> 这不是官方实时接口数据。正式上线前请用 Amazon Seller Central 最新费率公告更新 `REFERRAL_RATE` 与 `fulfillment_fee_usd()`。
+
+核心费率位置：
+- `REFERRAL_RATE` / `MIN_REFERRAL_FEE`
+- `fulfillment_fee_usd()`
 
 ---
 
-## 2. 快速开始（单个产品）
+## 2）批量 CSV（中文表头）
 
-直接运行：
+### 输入模板
+文件：`us_fba_template.csv`
 
+表头：
+`SKU,类目,售价,长cm,宽cm,高cm,重量kg,采购成本,头程成本,广告占比,退货占比,税率`
+
+### 执行命令
+Windows 推荐：
 ```bash
-python3 us_fba_calculator.py
+python us_fba_calculator.py --input us_fba_template.csv --output us_fba_result.csv
 ```
 
-它会用默认示例参数计算，并输出输入与结果。
+输出默认使用中文字段（例如：`大小件类型`、`FBA尾程费USD`、`利润USD`）。
 
-你也可以传入自己的参数：
+如果你想输出英文字段：
+```bash
+python us_fba_calculator.py --input us_fba_template.csv --output us_fba_result.csv --output-lang en
+```
+
+---
+
+## 3）单个产品命令行计算
 
 ```bash
-python3 us_fba_calculator.py \
+python us_fba_calculator.py \
   --sku A100 \
   --category home \
   --sell-price 39.99 \
-  --length-cm 30 \
-  --width-cm 20 \
-  --height-cm 10 \
+  --length-cm 30 --width-cm 20 --height-cm 10 \
   --weight-kg 0.8 \
-  --product-cost 8.5 \
-  --inbound-cost 1.2 \
-  --ppc-pct 10 \
-  --return-pct 2 \
-  --tax-rate-pct 0
+  --product-cost 8.5 --inbound-cost 1.2 \
+  --ppc-pct 10 --return-pct 2 --tax-rate-pct 0
 ```
 
 ---
 
-## 3. 一键批量算（CSV）
+## 4）可视化窗口（你要的“直接窗口输入实时计算”）
 
-### 输入模板
-参考：`us_fba_template.csv`
-
-字段：
-- `sku, category, sell_price, length_cm, width_cm, height_cm, weight_kg, product_cost, inbound_cost, ppc_pct, return_pct, tax_rate_pct`
-
-### 运行批量计算
-
+启动方式：
 ```bash
-python3 us_fba_calculator.py --input us_fba_template.csv --output us_fba_result.csv
+python us_fba_calculator.py --gui
 ```
 
-运行后会生成 `us_fba_result.csv`，每一行会新增：
-- `size_tier`
-- `fba_fee_usd`
-- `referral_fee_usd`
-- `tax_amount_usd`
-- `total_cost_usd`
-- `profit_usd`
-- `margin_pct`
-- `break_even_price_usd`
+功能：
+- 左侧输入 SKU、类目、尺寸、重量、成本、税率
+- 实时显示计算结果
+- 点击“批量CSV转换”可选择输入文件并导出结果
+
+> 如果运行报错提示缺少 tkinter：说明你的 Python 安装未包含 GUI 组件。
 
 ---
 
-## 4. 为什么 GitHub 网页看不到文件？（分支切换步骤）
+## 5）本地仓库/分支提醒
 
-通常是因为你在网页看的是 `main`，而本地改动在 `work` 分支。
+如果 GitHub 网页看不到文件，通常是：
+1. 改动在 `work` 分支，不在 `main`
+2. 本地还没 `git push` 到远程
 
-操作步骤（GitHub 页面）：
-1. 打开仓库首页。
-2. 点击左上角分支下拉（一般显示 `main`）。
-3. 输入并切换到 `work` 分支。
-4. 切换后就能看到本地提交过并推送到该分支的文件。
-
-如果 `work` 还没推送，先在终端执行：
-
+可先执行：
 ```bash
+git branch -vv
 git remote -v
 git push -u origin work
 ```
-
----
-
-## 5. 计算逻辑（简化）
-
-1. 根据尺寸重量判断 `size_tier`
-2. 根据 `size_tier + weight_kg` 匹配尾程费
-3. 根据类目匹配佣金率并应用最低佣金保护
-4. 叠加广告/退货/税费成本
-5. 输出利润、利润率、保本售价

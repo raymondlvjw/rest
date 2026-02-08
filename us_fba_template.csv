@@ -1,2 +1,2 @@
-sku,category,sell_price,length_cm,width_cm,height_cm,weight_kg,product_cost,inbound_cost,ppc_pct,return_pct,tax_rate_pct
+SKU,类目,售价,长cm,宽cm,高cm,重量kg,采购成本,头程成本,广告占比,退货占比,税率
 A001,home,29.99,22,15,8,0.62,6.5,0.9,8,2,0
