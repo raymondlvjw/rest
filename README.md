@@ -63,3 +63,17 @@ python us_fba_calculator.py --input us_fba_template.csv --output us_fba_result.c
 - `streamlit_app.py`：可视化页面（推荐）
 - `us_fba_template.csv`：中文模板
 - `launch_gui.bat`：Windows 双击启动脚本
+
+---
+
+## 6) 交互优化说明（已修复你反馈的“输入闪一下/要输两次”）
+
+已修复为“输入表”和“结果表”分离：
+- 上方只编辑输入字段（SKU、尺寸、重量、成本等）
+- 下方自动展示计算结果
+
+这样不会再把计算结果列反向写回编辑控件，避免出现：
+- 首次输入被覆盖
+- 修改后要再输入一次才更新
+
+说明：Streamlit 每次编辑都会触发一次 rerun（这是框架机制），页面有轻微刷新是正常现象；但数据不应再丢失，计算也会同轮更新。
