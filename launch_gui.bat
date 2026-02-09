@@ -1,4 +1,4 @@
 @echo off
 cd /d %~dp0
-python us_fba_calculator.py --gui
+streamlit run streamlit_app.py
 pause
